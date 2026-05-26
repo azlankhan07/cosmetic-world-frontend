@@ -328,7 +328,16 @@ export default function Navbar({
                 {link}
               </motion.a>
             ))}
-
+            <motion.a
+  href="/growway"
+  initial={{ opacity: 0, y: 20 }}
+  animate={{ opacity: 1, y: 0 }}
+  transition={{ delay: links.length * 0.08 }}
+  className="font-display text-4xl text-gold-light hover:text-gold transition-colors"
+  onClick={() => setMenuOpen(false)}
+>
+  Our Supplier
+</motion.a>
             {user ? (
               <motion.button
                 initial={{ opacity: 0, y: 20 }}
