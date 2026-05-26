@@ -148,7 +148,7 @@ function ProductCard({ product, index, onAdd, hoveredId, setHoveredId }) {
 
 {/* Badge */}
         {product.badge ? (
-          <span className="absolute top-4 left-4 font-mono text-[9px] tracking-widests uppercase bg-obsidian text-gold px-3 py-1.5" style={{ zIndex: 40 }}>
+          <span className="absolute top-2 md:top-4 left-2 md:left-4 font-mono text-[7px] md:text-[9px] tracking-widest uppercase bg-obsidian text-gold px-2 md:px-3 py-1 md:py-1.5" style={{ zIndex: 40 }}>
             {product.badge}
           </span>
         ) : null}
@@ -206,14 +206,14 @@ function ProductCard({ product, index, onAdd, hoveredId, setHoveredId }) {
 
       {/* Info */}
       <div className="overflow-hidden">
-        <div className="p-6 flex flex-col bg-cream border-b border-x border-gold/10 h-64">
+        <div className="p-3 md:p-6 flex flex-col bg-cream border-b border-x border-gold/10 h-44 md:h-64">
           <span className="font-mono text-[9px] tracking-widest uppercase text-gold mb-2">
             {product.category}
           </span>
-          <h3 className="font-heading text-xl font-bold text-soft-black leading-tight mb-3">
+          <h3 className="font-heading text-sm md:text-xl font-bold text-soft-black leading-tight mb-1 md:mb-3">
             {product.name}
           </h3>
-<p className="font-body text-xs leading-relaxed text-muted mb-1 line-clamp-4">
+<p className="font-body text-[10px] md:text-xs leading-relaxed text-muted mb-1 line-clamp-2 md:line-clamp-4">
   {product.desc}
 </p>
 <a
@@ -233,7 +233,7 @@ function ProductCard({ product, index, onAdd, hoveredId, setHoveredId }) {
                   </span>
                 </div>
               )}
-              <span className="font-display text-xl font-black text-soft-black">{product.price}</span>
+              <span className="font-display text-sm md:text-xl font-black text-soft-black">{product.price}</span>
             </div>
             <span className={`font-mono text-[9px] uppercase tracking-widest ${product.countInStock > 0 ? 'text-green-600' : 'text-red-500'}`}>
               {product.countInStock > 0 ? `In Stock · ${product.countInStock}` : 'Out of Stock'}
@@ -252,7 +252,18 @@ export default function Products({ onAddToCart }) {
   const [carouselIndex, setCarouselIndex] = useState(0)
   const [direction, setDirection] = useState(1)
   const [hoveredId, setHoveredId] = useState(null)
-  const itemsPerPage = 4
+  const [isMobile, setIsMobile] = useState(false)
+
+useEffect(() => {
+  const check = () => setIsMobile(window.innerWidth < 768)
+  check()
+  window.addEventListener('resize', check)
+  return () => window.removeEventListener('resize', check)
+}, [])
+
+const colsPerPage = isMobile ? 2 : 4
+const itemsPerPage = colsPerPage
+
 
   const canGoLeft = carouselIndex > 0
   const canGoRight = carouselIndex + itemsPerPage < products.length
@@ -334,11 +345,11 @@ export default function Products({ onAddToCart }) {
           {/* Track */}
           <div style={{ overflowX: 'clip', overflowY: 'visible' }}>
             <motion.div
-              animate={{ x: `calc(-${carouselIndex * 25}%)` }}
+              animate={{ x: `calc(-${carouselIndex * (100 / colsPerPage)}%)` }}
               transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
               className="flex"
               style={{
-                width: `${products.length * 25}%`,
+               width: `${products.length * (100 / colsPerPage)}%`,
                 paddingLeft: carouselIndex > 0 ? '0px' : '32px',
                 paddingRight: canGoRight ? '2px' : '32px',
                 transition: 'padding 0.5s cubic-bezier(0.22, 1, 0.36, 1)',
