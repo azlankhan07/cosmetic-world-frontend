@@ -313,14 +313,23 @@ export default function Navbar({
       </motion.nav>
 
       {/* Mobile Navigation */}
-      <AnimatePresence>
-        {menuOpen && (
+<AnimatePresence>
+  {menuOpen && (
+    <>
+      <motion.div
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        exit={{ opacity: 0 }}
+        transition={{ duration: 0.4 }}
+        className="fixed inset-0 z-30 bg-black/40 backdrop-blur-sm"
+        onClick={() => setMenuOpen(false)}
+      />
           <motion.div
-            initial={{ opacity: 0, x: '100%' }}
-            animate={{ opacity: 1, x: 0 }}
-            exit={{ opacity: 0, x: '100%' }}
-            transition={{ duration: 0.4, ease: [0.22, 1, 0.36, 1] }}
-            className="fixed inset-0 z-40 bg-obsidian flex flex-col items-center justify-center gap-10"
+initial={{ opacity: 0, x: '100%' }}
+animate={{ opacity: 1, x: 0 }}
+exit={{ opacity: 0, x: '100%' }}
+transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
+            className="fixed top-0 right-0 h-full w-[75vw] z-40 bg-obsidian/95 backdrop-blur-xl flex flex-col justify-center gap-6 px-8 shadow-2xl border-l border-gold/10"
           >
             {links.map((link, i) => (
               <motion.a
@@ -329,7 +338,7 @@ export default function Navbar({
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: i * 0.08 }}
-                className="font-display text-4xl text-gold-light hover:text-gold transition-colors"
+                className="font-display text-2xl text-gold-light hover:text-gold transition-colors"
                 onClick={() => setMenuOpen(false)}
               >
                 {link}
@@ -340,7 +349,7 @@ export default function Navbar({
   initial={{ opacity: 0, y: 20 }}
   animate={{ opacity: 1, y: 0 }}
   transition={{ delay: links.length * 0.08 }}
-  className="font-display text-4xl text-gold-light hover:text-gold transition-colors"
+className="font-display text-2xl text-gold-light hover:text-gold transition-colors"
   onClick={() => setMenuOpen(false)}
 >
   Our Supplier
@@ -351,7 +360,7 @@ export default function Navbar({
     initial={{ opacity: 0, y: 20 }}
     animate={{ opacity: 1, y: 0 }}
     transition={{ delay: (links.length + 1) * 0.08 }}
-    className="font-display text-4xl text-gold-light hover:text-gold transition-colors"
+className="font-display text-2xl text-gold-light hover:text-gold transition-colors"
     onClick={() => setMenuOpen(false)}
   >
     My Orders
@@ -385,6 +394,7 @@ export default function Navbar({
               </motion.button>
             )}
           </motion.div>
+          </>
         )}
       </AnimatePresence>
       {/* Mobile Search Overlay */}
