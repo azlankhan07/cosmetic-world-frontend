@@ -343,9 +343,12 @@ const itemsPerPage = colsPerPage
           )}
 
           {/* Track */}
-          <div style={{ overflowX: 'clip', overflowY: 'visible' }}>
-            <motion.div
-              animate={{ x: `calc(-${carouselIndex * (100 / colsPerPage)}%)` }}
+<div
+  className="md:overflow-x-visible overflow-x-auto snap-x snap-mandatory scrollbar-hide"
+  style={{ overflowY: 'visible', WebkitOverflowScrolling: 'touch' }}
+>
+  <motion.div
+    animate={{ x: `calc(-${carouselIndex * (100 / colsPerPage)}%)` }}
               transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
               className="flex"
               style={{
