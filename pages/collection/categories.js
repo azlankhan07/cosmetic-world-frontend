@@ -179,12 +179,13 @@ function CategorySection({ category, products, onAddToCart }) {
   )
 }
 
-export default function CategoriesPage() {
+export default function CategoriesPage({
+  user, onLogout, setAuthOpen,
+  cartItems, setCartOpen, onAddToCart, onRemoveFromCart, onClearCart, toast
+}) {
   const [products, setProducts] = useState([])
   const [loading, setLoading] = useState(true)
-  const [cartItems, setCartItems] = useState([])
   const [cartOpen, setCartOpen] = useState(false)
-  const [toast, setToast] = useState({ show: false, message: '' })
   const [activeTab, setActiveTab] = useState('all')
 
   const handleAddToCart = (product) => {
@@ -247,10 +248,13 @@ export default function CategoriesPage() {
       </Head>
 
       <div className="min-h-screen bg-obsidian">
-        <Navbar
-          cartCount={cartItems.reduce((sum, i) => sum + i.quantity, 0)}
-          onCartClick={() => setCartOpen(true)}
-        />
+<Navbar
+  cartCount={cartItems.reduce((sum, i) => sum + i.quantity, 0)}
+  onCartClick={() => setCartOpen(true)}
+  user={user}
+  onLoginClick={() => setAuthOpen(true)}
+  onLogout={onLogout}
+/>
         <CartSidebar
           isOpen={cartOpen}
           onClose={() => setCartOpen(false)}

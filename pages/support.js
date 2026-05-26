@@ -119,7 +119,7 @@ const sections = [
   },
 ]
 
-export default function SupportPage() {
+export default function SupportPage({ user, onLogout }) {
   const [active, setActive] = useState('shipping')
   const [openFaq, setOpenFaq] = useState(null)
   const router = useRouter()
@@ -141,7 +141,13 @@ export default function SupportPage() {
         <meta name="description" content="Shipping policy, returns, privacy policy and FAQ for Cosmetic World." />
       </Head>
 
-      <Navbar cartCount={0} onCartClick={() => {}} user={null} onLoginClick={() => {}} onLogout={() => {}} />
+      <Navbar
+  cartCount={0}
+  onCartClick={() => {}}
+  user={user}
+  onLoginClick={() => {}}
+  onLogout={onLogout}
+/>
 
       {/* Hero Banner */}
       <section className="bg-obsidian pt-32 pb-16 px-8 md:px-16 text-center border-b border-gold/10">

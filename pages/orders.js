@@ -1,5 +1,4 @@
 import { useState, useEffect } from 'react'
-import { useSession } from 'next-auth/react'
 import { motion, AnimatePresence } from 'framer-motion'
 import axios from 'axios'
 import Head from 'next/head'
@@ -426,17 +425,9 @@ const handleCancel = async () => {
     </motion.div>
   )
 }
-export default function OrdersPage() {
+export default function OrdersPage({ user }) {
   const [orders, setOrders] = useState([])
   const [loading, setLoading] = useState(true)
-  const [user, setUser] = useState(null)
-  const { data: session } = useSession()
-
-  useEffect(() => {
-    const saved = localStorage.getItem('user')
-    if (saved) setUser(JSON.parse(saved))
-  }, [])
-
   useEffect(() => {
     const token = localStorage.getItem('token')
     if (!token) { setLoading(false); return }

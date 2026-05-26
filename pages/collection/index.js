@@ -173,13 +173,15 @@ onClick={() => onAddToCart({
   )
 }
 
-export default function CollectionPage() {
+export default function CollectionPage({
+  user, onLogout, setAuthOpen,
+  cartItems, setCartOpen, onAddToCart, onRemoveFromCart, onClearCart, toast
+}) {
   const [products, setProducts] = useState([])
   const [loading, setLoading] = useState(true)
   const [reviews, setReviews] = useState({})
-  const [cartItems, setCartItems] = useState([])
   const [cartOpen, setCartOpen] = useState(false)
-  const [toast, setToast] = useState({ show: false, message: '' })
+  const [localToast, setLocalToast] = useState({ show: false, message: '' })
 
   const handleAddToCart = (product) => {
     setCartItems(prev => {
@@ -231,10 +233,13 @@ export default function CollectionPage() {
       </Head>
 
       <div className="min-h-screen bg-obsidian">
-  <Navbar
-    cartCount={cartItems.reduce((sum, i) => sum + i.quantity, 0)}
-    onCartClick={() => setCartOpen(true)}
-  />
+<Navbar
+  cartCount={cartItems.reduce((sum, i) => sum + i.quantity, 0)}
+  onCartClick={() => setCartOpen(true)}
+  user={user}
+  onLoginClick={() => setAuthOpen(true)}
+  onLogout={onLogout}
+/>
   <CartSidebar
     isOpen={cartOpen}
     onClose={() => setCartOpen(false)}
