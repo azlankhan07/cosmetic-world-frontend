@@ -13,6 +13,7 @@ export default function Navbar({
   const [scrolled, setScrolled] = useState(false)
   const [menuOpen, setMenuOpen] = useState(false)
   const [searchHovered, setSearchHovered] = useState(false)
+  const [mobileSearchOpen, setMobileSearchOpen] = useState(false)
   const [lastSearched, setLastSearched] = useState(null)
   const [searchQuery, setSearchQuery] = useState('')
   const [searchResults, setSearchResults] = useState([])
@@ -280,7 +281,13 @@ export default function Navbar({
               Login
             </button>
           )}
-
+{/* Mobile Search Icon */}
+<button
+  className="md:hidden text-cream/70 hover:text-gold transition-colors"
+  onClick={() => setMobileSearchOpen(true)}
+>
+  <Search size={20} />
+</button>
           {/* Cart */}
           <button onClick={onCartClick} className="relative group">
             <ShoppingBag
@@ -306,45 +313,6 @@ export default function Navbar({
       </motion.nav>
 
       {/* Mobile Navigation */}
-      {/* Mobile Search */}
-<div className="w-full px-8 mb-4">
-  <div className="relative">
-    <input
-      type="text"
-      value={searchQuery}
-      onChange={e => setSearchQuery(e.target.value)}
-      placeholder="Search products..."
-      className="w-full bg-white/10 border border-gold/20 text-cream text-sm px-4 py-3 focus:outline-none focus:border-gold placeholder:text-cream/30 font-body rounded-full"
-    />
-    <Search size={16} className="absolute right-4 top-1/2 -translate-y-1/2 text-cream/40" />
-  </div>
-
-  {/* Mobile Search Results */}
-  {searchResults.length > 0 && (
-    <div className="mt-2 bg-obsidian border border-gold/20 rounded-2xl overflow-hidden">
-      {searchResults.map(product => (
-        <a
-          key={product._id}
-          href={`/products/${product._id}`}
-          onClick={() => {
-            localStorage.setItem('lastSearchedProduct', JSON.stringify(product))
-            setMenuOpen(false)
-          }}
-          className="flex items-center gap-3 px-4 py-3 hover:bg-gold/10 transition-colors border-b border-gold/10 last:border-0"
-        >
-          {product.image && (
-            <img src={product.image} alt={product.name} className="w-10 h-12 object-cover bg-cream/10" />
-          )}
-          <div>
-            <p className="font-heading font-bold text-sm text-cream leading-tight">{product.name}</p>
-            <p className="font-mono text-[9px] uppercase tracking-widest text-gold mt-0.5">{product.category}</p>
-            <p className="font-body text-xs text-gold mt-0.5">PKR {product.price?.toLocaleString()}</p>
-          </div>
-        </a>
-      ))}
-    </div>
-  )}
-</div>
       <AnimatePresence>
         {menuOpen && (
           <motion.div
@@ -419,6 +387,97 @@ export default function Navbar({
           </motion.div>
         )}
       </AnimatePresence>
+      {/* Mobile Search Overlay */}
+<AnimatePresence>
+  {mobileSearchOpen && (
+    <motion.div
+      initial={{ opacity: 0, y: -20 }}
+      animate={{ opacity: 1, y: 0 }}
+      exit={{ opacity: 0, y: -20 }}
+      transition={{ duration: 0.3, ease: [0.22, 1, 0.36, 1] }}
+      className="fixed inset-0 z-50 bg-obsidian flex flex-col md:hidden"
+    >
+      {/* Header */}
+      <div className="flex items-center gap-3 px-5 py-5 border-b border-gold/10">
+        <Search size={18} className="text-gold/50 shrink-0" />
+        <input
+          autoFocus
+          type="text"
+          value={searchQuery}
+          onChange={e => setSearchQuery(e.target.value)}
+          placeholder="Search products..."
+          className="flex-1 bg-transparent text-cream text-sm focus:outline-none placeholder:text-cream/30 font-body"
+        />
+        <button
+          onClick={() => {
+            setMobileSearchOpen(false)
+            setSearchQuery('')
+            setSearchResults([])
+          }}
+          className="text-cream/50 hover:text-gold transition-colors"
+        >
+          <X size={20} />
+        </button>
+      </div>
+
+      {/* Results */}
+      <div className="flex-1 overflow-y-auto">
+        {searchResults.length > 0 ? (
+          searchResults.map(product => (
+            <a
+              key={product._id}
+              href={`/products/${product._id}`}
+              onClick={() => {
+                localStorage.setItem('lastSearchedProduct', JSON.stringify(product))
+                setMobileSearchOpen(false)
+                setSearchQuery('')
+                setSearchResults([])
+              }}
+              className="flex items-center gap-4 px-5 py-4 border-b border-gold/10 hover:bg-gold/5 transition-colors"
+            >
+              {product.image && (
+                <img src={product.image} alt={product.name} className="w-12 h-14 object-cover bg-cream/10 shrink-0" />
+              )}
+              <div>
+                <p className="font-heading font-bold text-sm text-cream leading-tight">{product.name}</p>
+                <p className="font-mono text-[9px] uppercase tracking-widest text-gold mt-1">{product.category}</p>
+                <p className="font-body text-xs text-gold/70 mt-0.5">PKR {product.price?.toLocaleString()}</p>
+              </div>
+            </a>
+          ))
+        ) : searchQuery.trim() ? (
+          <div className="flex flex-col items-center justify-center py-20 gap-3">
+            <span className="font-display text-4xl text-gold/20">✦</span>
+            <p className="font-mono text-[10px] tracking-widest uppercase text-cream/30">No results found</p>
+          </div>
+        ) : lastSearched ? (
+          <div className="px-5 py-4">
+            <p className="font-mono text-[9px] uppercase tracking-widest text-gold/40 mb-3">Last Viewed</p>
+            <a
+              href={`/products/${lastSearched._id}`}
+              onClick={() => setMobileSearchOpen(false)}
+              className="flex items-center gap-4 py-2"
+            >
+              {lastSearched.image && (
+                <img src={lastSearched.image} alt={lastSearched.name} className="w-12 h-14 object-cover bg-cream/10 shrink-0" />
+              )}
+              <div>
+                <p className="font-heading font-bold text-sm text-cream leading-tight">{lastSearched.name}</p>
+                <p className="font-mono text-[9px] uppercase tracking-widest text-gold mt-1">{lastSearched.category}</p>
+                <p className="font-body text-xs text-gold/70 mt-0.5">PKR {lastSearched.price?.toLocaleString()}</p>
+              </div>
+            </a>
+          </div>
+        ) : (
+          <div className="flex flex-col items-center justify-center py-20 gap-3">
+            <span className="font-display text-4xl text-gold/20">✦</span>
+            <p className="font-mono text-[10px] tracking-widest uppercase text-cream/30">Start typing to search</p>
+          </div>
+        )}
+      </div>
+    </motion.div>
+  )}
+</AnimatePresence>
     </>
   )
 }
