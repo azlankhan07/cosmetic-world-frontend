@@ -17,13 +17,12 @@ const BRAND_IMAGE = '/images/Cosmetic_World.png';
 
 export default function AboutBrand() {
   const ref = useRef()
-  const inView = useInView(ref, { once: true, margin: '-100px' })
+  const inView = useInView(ref, { once: true, margin: '0px 0px -50px 0px' })
 
   return (
-    <section id="our-story" className="bg-cream py-32 overflow-hidden">
-      <div className="max-w-7xl mx-auto px-8 md:px-16">
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-20 items-center">
-
+<section ref={ref} id="our-story" className="bg-cream py-32 overflow-hidden">
+  <div className="max-w-7xl mx-auto px-8 md:px-16">
+    <div className="grid grid-cols-1 lg:grid-cols-2 gap-20 items-center">
           {/* LEFT — image area */}
           <motion.div
             initial={{ opacity: 0, x: -60 }}
@@ -70,7 +69,7 @@ export default function AboutBrand() {
           </motion.div>
 
           {/* RIGHT — text */}
-          <div ref={ref}>
+          <div>
             <motion.div
               initial={{ opacity: 0 }} animate={inView ? { opacity: 1 } : {}}
               className="section-tag mb-6"

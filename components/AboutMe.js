@@ -24,10 +24,10 @@ const achievements = [
 
 export default function AboutMe() {
   const ref = useRef()
-  const inView = useInView(ref, { once: true, margin: '-80px' })
+  const inView = useInView(ref, { once: true, margin: '0px 0px -50px 0px' })
 
   return (
-    <section id="founder" className="bg-ivory py-16 px-8 md:px-16 overflow-hidden">
+    <section ref={ref} id="founder" className="bg-ivory py-16 px-8 md:px-16 overflow-hidden">
       <div className="max-w-7xl mx-auto">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
 
@@ -68,7 +68,7 @@ export default function AboutMe() {
           </motion.div>
 
           {/* RIGHT — Story */}
-          <div ref={ref} className="pt-0">
+          <div className="pt-0">
             <motion.div
               initial={{ opacity: 0 }} animate={inView ? { opacity: 1 } : {}}
               className="section-tag mb-6"
