@@ -27,16 +27,16 @@ function ProductEntry({ product, index, onAddToCart }) {
       )}
 
       {/* Product row — alternates left/right */}
-      <div className={`grid grid-cols-1 md:grid-cols-2 h-screen items-start`}>
+      <div className={`grid grid-cols-1 md:grid-cols-2 md:h-screen items-start`}>
 
         {/* Image side */}
         <div className={`relative overflow-hidden ${isEven ? 'md:order-1' : 'md:order-2'}`}>
           <a href={`/products/${product._id}`}>
-            <div className="sticky top-0 h-screen max-h-screen overflow-hidden">
+            <div className="md:sticky md:top-0 md:h-screen md:max-h-screen overflow-hidden h-[50vw]">
               <img
   src={product.image}
   alt={product.name}
-  className="w-full h-full object-contain transition-transform duration-700 hover:scale-105"
+  className="w-full h-full object-cover md:object-contain transition-transform duration-700 hover:scale-105"
 />
               {/* Gradient overlay */}
               <div className="absolute inset-0 bg-gradient-to-t from-obsidian/60 via-transparent to-transparent" />
@@ -61,7 +61,7 @@ function ProductEntry({ product, index, onAddToCart }) {
         </div>
 
         {/* Info side */}
-        <div className={`flex flex-col justify-center px-8 md:px-12 py-12 bg-obsidian ${isEven ? 'md:order-2' : 'md:order-1'}`}>
+        <div className={`flex flex-col justify-center px-6 md:px-12 py-10 md:py-12 bg-obsidian ${isEven ? 'md:order-2' : 'md:order-1'}`}>
           {/* Index number */}
           <span className="font-mono text-[10px] tracking-widest uppercase text-gold/20 mb-6">
             {String(index + 1).padStart(2, '0')} / {String(product.totalCount || '').padStart(2, '0')}
