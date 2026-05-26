@@ -1,6 +1,6 @@
-import { motion, useInView, AnimatePresence } from 'framer-motion'
+import { motion, useInView } from 'framer-motion'
 import { useRef, useState, useEffect } from 'react'
-import { ShoppingBag, Star, ChevronLeft, ChevronRight } from 'lucide-react'
+import { ShoppingBag, ChevronLeft, ChevronRight } from 'lucide-react'
 import axios from 'axios'
 
 const fallbackProducts = [
@@ -121,15 +121,15 @@ function ProductCard({ product, index, onAdd, hoveredId, setHoveredId }) {
             animate={{ scale: isHovered ? 1.07 : 1 }}
             transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
             style={{
-  position: 'absolute',
-  inset: 0,
-  zIndex: isHovered ? 30 : 1,
-  transformOrigin: 'center center',
-  pointerEvents: 'none',
-  borderRadius: isHovered ? '12px' : '0px',
-  overflow: 'hidden',
-  transition: 'border-radius 0.5s ease',
-}}
+              position: 'absolute',
+              inset: 0,
+              zIndex: isHovered ? 30 : 1,
+              transformOrigin: 'center center',
+              pointerEvents: 'none',
+              borderRadius: isHovered ? '12px' : '0px',
+              overflow: 'hidden',
+              transition: 'border-radius 0.5s ease',
+            }}
           >
             <img
               src={product.image}
@@ -146,7 +146,7 @@ function ProductCard({ product, index, onAdd, hoveredId, setHoveredId }) {
           </div>
         )}
 
-{/* Badge */}
+        {/* Badge */}
         {product.badge ? (
           <span className="absolute top-2 md:top-4 left-2 md:left-4 font-mono text-[7px] md:text-[9px] tracking-widest uppercase bg-obsidian text-gold px-2 md:px-3 py-1 md:py-1.5" style={{ zIndex: 40 }}>
             {product.badge}
@@ -154,7 +154,7 @@ function ProductCard({ product, index, onAdd, hoveredId, setHoveredId }) {
         ) : null}
 
         {/* Free Delivery Badge */}
-{product.deliveryType === 'free' && (
+        {product.deliveryType === 'free' && (
           <span
             className="absolute left-4 font-mono text-[9px] tracking-widest uppercase bg-green-500 text-white px-3 py-1.5"
             style={{ zIndex: 40, bottom: '20px', top: 'auto', fontSize: '9px', letterSpacing: '0.08em', lineHeight: '1' }}
@@ -213,16 +213,16 @@ function ProductCard({ product, index, onAdd, hoveredId, setHoveredId }) {
           <h3 className="font-heading text-sm md:text-xl font-bold text-soft-black leading-tight mb-1 md:mb-3">
             {product.name}
           </h3>
-<p className="font-body text-[10px] md:text-xs leading-relaxed text-muted mb-1 line-clamp-2 md:line-clamp-4">
-  {product.desc}
-</p>
-<a
-  href={`/products/${product._id}`}
-  onClick={e => e.stopPropagation()}
-  className="font-mono text-[9px] tracking-widest uppercase text-gold hover:text-gold-light transition-colors mb-4"
->
-  More →
-</a>
+          <p className="font-body text-[10px] md:text-xs leading-relaxed text-muted mb-1 line-clamp-2 md:line-clamp-4">
+            {product.desc}
+          </p>
+          <a
+            href={`/products/${product._id}`}
+            onClick={e => e.stopPropagation()}
+            className="font-mono text-[9px] tracking-widest uppercase text-gold hover:text-gold-light transition-colors mb-4"
+          >
+            More →
+          </a>
           <div className="flex items-center justify-between pt-4 border-t border-gold/10">
             <div className="flex flex-col gap-0.5">
               {product.originalPrice && (
@@ -253,20 +253,38 @@ export default function Products({ onAddToCart }) {
   const [direction, setDirection] = useState(1)
   const [hoveredId, setHoveredId] = useState(null)
   const [isMobile, setIsMobile] = useState(false)
+  const trackRef = useRef(null)
 
-useEffect(() => {
-  const check = () => setIsMobile(window.innerWidth < 768)
-  check()
-  window.addEventListener('resize', check)
-  return () => window.removeEventListener('resize', check)
-}, [])
+  useEffect(() => {
+    const check = () => setIsMobile(window.innerWidth < 768)
+    check()
+    window.addEventListener('resize', check)
+    return () => window.removeEventListener('resize', check)
+  }, [])
 
-const colsPerPage = isMobile ? 2 : 4
-const itemsPerPage = colsPerPage
-
+  const colsPerPage = isMobile ? 2 : 4
+  const itemsPerPage = colsPerPage
 
   const canGoLeft = carouselIndex > 0
   const canGoRight = carouselIndex + itemsPerPage < products.length
+
+  // Unified scroll function — syncs both arrow clicks and swipe position
+  const scrollToIndex = (index) => {
+    const newIndex = Math.max(0, Math.min(index, products.length - 1))
+    setCarouselIndex(newIndex)
+    if (isMobile && trackRef.current) {
+      const cardWidth = trackRef.current.offsetWidth / colsPerPage
+      trackRef.current.scrollTo({ left: newIndex * cardWidth, behavior: 'smooth' })
+    }
+  }
+
+  // Sync carouselIndex when user swipes manually
+  const handleScroll = () => {
+    if (!isMobile || !trackRef.current) return
+    const cardWidth = trackRef.current.offsetWidth / colsPerPage
+    const newIndex = Math.round(trackRef.current.scrollLeft / cardWidth)
+    setCarouselIndex(newIndex)
+  }
 
   const fetchProducts = () => {
     axios.get(`${process.env.NEXT_PUBLIC_API_URL}/api/products`)
@@ -285,14 +303,14 @@ const itemsPerPage = colsPerPage
   }, [])
 
   useEffect(() => {
-    const handleScroll = () => setHoveredId(null)
-    window.addEventListener('scroll', handleScroll)
-    return () => window.removeEventListener('scroll', handleScroll)
+    const handlePageScroll = () => setHoveredId(null)
+    window.addEventListener('scroll', handlePageScroll)
+    return () => window.removeEventListener('scroll', handlePageScroll)
   }, [])
 
   return (
     <>
-      {/* Header section — no overflow clipping */}
+      {/* Header section */}
       <section id="products" className="bg-white pt-32 px-0">
         <div className="max-w-screen-2xl mx-auto">
           <div ref={ref} className="flex flex-col md:flex-row md:items-end justify-between mb-20 gap-8 px-4 md:px-8">
@@ -328,107 +346,156 @@ const itemsPerPage = colsPerPage
         </div>
       </section>
 
-      {/* Carousel section — isolated overflow clipping */}
+      {/* Carousel section */}
       <section className="bg-white pb-32" style={{ overflowX: 'clip', overflowY: 'visible' }}>
         <div className="relative" style={{ overflowX: 'clip', overflowY: 'visible' }}>
 
           {/* Left Arrow */}
           {canGoLeft && (
             <button
-              onClick={() => { setDirection(-1); setCarouselIndex(i => i - 1) }}
+              onClick={() => { setDirection(-1); scrollToIndex(carouselIndex - 1) }}
               className="absolute left-2 top-1/2 -translate-y-1/2 z-10 w-12 h-12 bg-obsidian text-gold flex items-center justify-center hover:bg-gold hover:text-obsidian transition-colors shadow-xl"
             >
               <ChevronLeft size={22} />
             </button>
           )}
 
-          {/* Track */}
-<div
-  className="md:overflow-x-visible overflow-x-auto snap-x snap-mandatory scrollbar-hide"
-  style={{ overflowY: 'visible', WebkitOverflowScrolling: 'touch' }}
->
-  <motion.div
-    animate={{ x: `calc(-${carouselIndex * (100 / colsPerPage)}%)` }}
-              transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
-              className="flex"
-              style={{
-               width: `${products.length * (100 / colsPerPage)}%`,
-                paddingLeft: carouselIndex > 0 ? '0px' : '32px',
-                paddingRight: canGoRight ? '2px' : '32px',
-                transition: 'padding 0.5s cubic-bezier(0.22, 1, 0.36, 1)',
-                boxSizing: 'border-box',
-              }}
+          {/* MOBILE: native scroll + snap */}
+          {isMobile ? (
+            <div
+              ref={trackRef}
+              onScroll={handleScroll}
+              className="overflow-x-auto snap-x snap-mandatory scrollbar-hide"
+              style={{ overflowY: 'visible', WebkitOverflowScrolling: 'touch' }}
             >
-              {products.map((p, i) => (
-                <div
-                  key={p.id}
-                  style={{
-                    width: `${100 / products.length}%`,
-                    zIndex: hoveredId === p.id || hoveredId === p._id ? 20 : 1,
-                    position: 'relative',
-                    overflow: 'visible',
-                  }}
-                  className="flex-shrink-0 px-0.5"
-                >
-                  <ProductCard
-                    product={p}
-                    index={i}
-                    onAdd={onAddToCart}
-                    hoveredId={hoveredId}
-                    setHoveredId={setHoveredId}
-                  />
-                </div>
-              ))}
-
-              {/* End Card */}
               <div
-                style={{ width: `${100 / products.length}%` }}
-                className="flex-shrink-0 px-0.5"
+                className="flex"
+                style={{
+                  width: `${(products.length + 1) * 50}vw`,
+                  paddingLeft: '8px',
+                  paddingRight: '8px',
+                  boxSizing: 'border-box',
+                }}
               >
-                <div className="relative aspect-[4/4] bg-gradient-to-b from-stone-950 to-obsidian flex flex-col items-center justify-center gap-6 px-8">
-                  <div className="flex flex-col items-center gap-2">
-                    <span className="font-mono text-[9px] tracking-widest uppercase text-gold/40">
-                      The Collection
-                    </span>
-                    <span className="font-display text-4xl font-black text-gold/60 text-center leading-tight">
-                      ✦
-                    </span>
+                {products.map((p, i) => (
+                  <div
+                    key={p.id}
+                    className="snap-start flex-shrink-0 px-0.5"
+                    style={{ width: '50vw' }}
+                  >
+                    <ProductCard
+                      product={p}
+                      index={i}
+                      onAdd={onAddToCart}
+                      hoveredId={hoveredId}
+                      setHoveredId={setHoveredId}
+                    />
                   </div>
-                  <div className="flex flex-col items-center gap-3 text-center">
-                    <p className="font-display text-2xl font-black text-cream/60 leading-tight">
+                ))}
+                {/* End Card mobile */}
+                <div className="snap-start flex-shrink-0 px-0.5" style={{ width: '50vw' }}>
+                  <div className="relative aspect-[5/5] bg-gradient-to-b from-stone-950 to-obsidian flex flex-col items-center justify-center gap-4 px-4">
+                    <p className="font-display text-xl font-black text-cream/60 leading-tight text-center">
                       You've seen<br />
                       <span className="font-heading italic text-gold/60">them all</span>
                     </p>
-                    <p className="font-body text-[11px] text-cream/50 leading-relaxed max-w-[160px]">
+                    <p className="font-body text-[10px] text-cream/50 leading-relaxed text-center">
                       More formulas are being crafted. Check back soon.
                     </p>
                   </div>
-                  <div className="absolute bottom-8 flex items-center gap-2">
-                    <div className="w-6 h-px bg-gold/40" />
-                    <span className="font-mono text-[8px] tracking-widest uppercase text-gold/50">End of Collection</span>
-                    <div className="w-6 h-px bg-gold/40" />
+                  <div className="p-3 flex flex-col bg-cream border-b border-x border-gold/10 h-44">
+                    <span className="font-mono text-[9px] tracking-widest uppercase text-gold/60 mb-2">Coming Soon</span>
+                    <h3 className="font-heading text-sm font-bold text-soft-black/50 leading-tight mb-2">New Arrivals</h3>
+                    <p className="font-body text-[10px] leading-relaxed text-muted/70">Our next formula is in the making.</p>
                   </div>
                 </div>
-                <div className="p-6 flex flex-col bg-cream border-b border-x border-gold/10 h-64">
-                  <span className="font-mono text-[9px] tracking-widest uppercase text-gold/60 mb-2">
-                    Coming Soon
-                  </span>
-                  <h3 className="font-heading text-xl font-bold text-soft-black/50 leading-tight mb-3">
-                    New Arrivals
-                  </h3>
-                  <p className="font-body text-xs leading-relaxed text-muted/70 flex-1">
-                    Our next formula is in the making. Ancient ingredients, modern science.
-                  </p>
-                </div>
               </div>
+            </div>
+          ) : (
+            /* DESKTOP: framer-motion transform carousel */
+            <div style={{ overflowX: 'clip', overflowY: 'visible' }}>
+              <motion.div
+                animate={{ x: `calc(-${carouselIndex * 25}%)` }}
+                transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
+                className="flex"
+                style={{
+                  width: `${products.length * 25}%`,
+                  paddingLeft: carouselIndex > 0 ? '0px' : '32px',
+                  paddingRight: canGoRight ? '2px' : '32px',
+                  transition: 'padding 0.5s cubic-bezier(0.22, 1, 0.36, 1)',
+                  boxSizing: 'border-box',
+                }}
+              >
+                {products.map((p, i) => (
+                  <div
+                    key={p.id}
+                    style={{
+                      width: `${100 / products.length}%`,
+                      zIndex: hoveredId === p.id || hoveredId === p._id ? 20 : 1,
+                      position: 'relative',
+                      overflow: 'visible',
+                    }}
+                    className="flex-shrink-0 px-0.5"
+                  >
+                    <ProductCard
+                      product={p}
+                      index={i}
+                      onAdd={onAddToCart}
+                      hoveredId={hoveredId}
+                      setHoveredId={setHoveredId}
+                    />
+                  </div>
+                ))}
 
-            </motion.div>
-          </div>
+                {/* End Card desktop */}
+                <div
+                  style={{ width: `${100 / products.length}%` }}
+                  className="flex-shrink-0 px-0.5"
+                >
+                  <div className="relative aspect-[4/4] bg-gradient-to-b from-stone-950 to-obsidian flex flex-col items-center justify-center gap-6 px-8">
+                    <div className="flex flex-col items-center gap-2">
+                      <span className="font-mono text-[9px] tracking-widest uppercase text-gold/40">
+                        The Collection
+                      </span>
+                      <span className="font-display text-4xl font-black text-gold/60 text-center leading-tight">
+                        ✦
+                      </span>
+                    </div>
+                    <div className="flex flex-col items-center gap-3 text-center">
+                      <p className="font-display text-2xl font-black text-cream/60 leading-tight">
+                        You've seen<br />
+                        <span className="font-heading italic text-gold/60">them all</span>
+                      </p>
+                      <p className="font-body text-[11px] text-cream/50 leading-relaxed max-w-[160px]">
+                        More formulas are being crafted. Check back soon.
+                      </p>
+                    </div>
+                    <div className="absolute bottom-8 flex items-center gap-2">
+                      <div className="w-6 h-px bg-gold/40" />
+                      <span className="font-mono text-[8px] tracking-widest uppercase text-gold/50">End of Collection</span>
+                      <div className="w-6 h-px bg-gold/40" />
+                    </div>
+                  </div>
+                  <div className="p-6 flex flex-col bg-cream border-b border-x border-gold/10 h-64">
+                    <span className="font-mono text-[9px] tracking-widest uppercase text-gold/60 mb-2">
+                      Coming Soon
+                    </span>
+                    <h3 className="font-heading text-xl font-bold text-soft-black/50 leading-tight mb-3">
+                      New Arrivals
+                    </h3>
+                    <p className="font-body text-xs leading-relaxed text-muted/70 flex-1">
+                      Our next formula is in the making. Ancient ingredients, modern science.
+                    </p>
+                  </div>
+                </div>
+              </motion.div>
+            </div>
+          )}
 
           {/* Right Arrow */}
           {canGoRight && (
             <button
-              onClick={() => { setDirection(1); setCarouselIndex(i => i + 1) }}
+              onClick={() => { setDirection(1); scrollToIndex(carouselIndex + 1) }}
               className="absolute right-2 top-1/2 -translate-y-1/2 z-10 w-12 h-12 bg-obsidian text-gold flex items-center justify-center hover:bg-gold hover:text-obsidian transition-colors shadow-xl"
             >
               <ChevronRight size={22} />
