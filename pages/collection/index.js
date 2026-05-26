@@ -32,11 +32,11 @@ function ProductEntry({ product, index, onAddToCart }) {
         {/* Image side */}
         <div className={`relative overflow-hidden ${isEven ? 'md:order-1' : 'md:order-2'}`}>
           <a href={`/products/${product._id}`}>
-            <div className="md:sticky md:top-0 md:h-screen md:max-h-screen overflow-hidden h-[50vw]">
+            <div className="md:sticky md:top-0 md:h-screen md:max-h-screen overflow-hidden h-[100vw]">
               <img
   src={product.image}
   alt={product.name}
-  className="w-full h-full object-cover md:object-contain transition-transform duration-700 hover:scale-105"
+  className="w-full h-full object-contain transition-transform duration-700 hover:scale-105"
 />
               {/* Gradient overlay */}
               <div className="absolute inset-0 bg-gradient-to-t from-obsidian/60 via-transparent to-transparent" />
