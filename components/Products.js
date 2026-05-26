@@ -285,6 +285,19 @@ export default function Products({ onAddToCart }) {
     const newIndex = Math.round(trackRef.current.scrollLeft / cardWidth)
     setCarouselIndex(newIndex)
   }
+  const handleTouchStart = (e) => {
+  trackRef.current._touchStartX = e.touches[0].clientX
+  trackRef.current._touchStartY = e.touches[0].clientY
+}
+
+const handleTouchMove = (e) => {
+  if (!trackRef.current._touchStartX) return
+  const dx = Math.abs(e.touches[0].clientX - trackRef.current._touchStartX)
+  const dy = Math.abs(e.touches[0].clientY - trackRef.current._touchStartY)
+  if (dx > dy) {
+    e.preventDefault() // lock vertical scroll when swiping horizontal
+  }
+}
 
   const fetchProducts = () => {
     axios.get(`${process.env.NEXT_PUBLIC_API_URL}/api/products`)
@@ -362,12 +375,14 @@ export default function Products({ onAddToCart }) {
 
           {/* MOBILE: native scroll + snap */}
           {isMobile ? (
-            <div
-              ref={trackRef}
-              onScroll={handleScroll}
-              className="overflow-x-auto snap-x snap-mandatory scrollbar-hide"
-              style={{ overflowY: 'visible', WebkitOverflowScrolling: 'touch' }}
-            >
+<div
+  ref={trackRef}
+  onScroll={handleScroll}
+  onTouchStart={handleTouchStart}
+  onTouchMove={handleTouchMove}
+  className="overflow-x-auto snap-x snap-mandatory scrollbar-hide"
+  style={{ overflowY: 'hidden', WebkitOverflowScrolling: 'touch', touchAction: 'pan-x' }}
+>
               <div
                 className="flex"
                 style={{
