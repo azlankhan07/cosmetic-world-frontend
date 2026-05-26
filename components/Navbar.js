@@ -306,6 +306,45 @@ export default function Navbar({
       </motion.nav>
 
       {/* Mobile Navigation */}
+      {/* Mobile Search */}
+<div className="w-full px-8 mb-4">
+  <div className="relative">
+    <input
+      type="text"
+      value={searchQuery}
+      onChange={e => setSearchQuery(e.target.value)}
+      placeholder="Search products..."
+      className="w-full bg-white/10 border border-gold/20 text-cream text-sm px-4 py-3 focus:outline-none focus:border-gold placeholder:text-cream/30 font-body rounded-full"
+    />
+    <Search size={16} className="absolute right-4 top-1/2 -translate-y-1/2 text-cream/40" />
+  </div>
+
+  {/* Mobile Search Results */}
+  {searchResults.length > 0 && (
+    <div className="mt-2 bg-obsidian border border-gold/20 rounded-2xl overflow-hidden">
+      {searchResults.map(product => (
+        <a
+          key={product._id}
+          href={`/products/${product._id}`}
+          onClick={() => {
+            localStorage.setItem('lastSearchedProduct', JSON.stringify(product))
+            setMenuOpen(false)
+          }}
+          className="flex items-center gap-3 px-4 py-3 hover:bg-gold/10 transition-colors border-b border-gold/10 last:border-0"
+        >
+          {product.image && (
+            <img src={product.image} alt={product.name} className="w-10 h-12 object-cover bg-cream/10" />
+          )}
+          <div>
+            <p className="font-heading font-bold text-sm text-cream leading-tight">{product.name}</p>
+            <p className="font-mono text-[9px] uppercase tracking-widest text-gold mt-0.5">{product.category}</p>
+            <p className="font-body text-xs text-gold mt-0.5">PKR {product.price?.toLocaleString()}</p>
+          </div>
+        </a>
+      ))}
+    </div>
+  )}
+</div>
       <AnimatePresence>
         {menuOpen && (
           <motion.div
@@ -338,6 +377,18 @@ export default function Navbar({
 >
   Our Supplier
 </motion.a>
+{user && (
+  <motion.a
+    href="/orders"
+    initial={{ opacity: 0, y: 20 }}
+    animate={{ opacity: 1, y: 0 }}
+    transition={{ delay: (links.length + 1) * 0.08 }}
+    className="font-display text-4xl text-gold-light hover:text-gold transition-colors"
+    onClick={() => setMenuOpen(false)}
+  >
+    My Orders
+  </motion.a>
+)}
             {user ? (
               <motion.button
                 initial={{ opacity: 0, y: 20 }}
