@@ -3,7 +3,7 @@ import Head from 'next/head'
 import Link from 'next/link'
 import axios from 'axios'
 import { motion, useInView } from 'framer-motion'
-import { ShoppingBag, ArrowLeft, ArrowRight } from 'lucide-react'
+import { ShoppingBag, ArrowLeft } from 'lucide-react'
 import Navbar from '../../components/Navbar'
 import CartSidebar from '../../components/CartSidebar'
 import Toast from '../../components/Toast'
@@ -34,7 +34,6 @@ const CATEGORY_ORDER = ['skincare', 'haircare', 'bodycare']
 function ProductCard({ product, onAddToCart, index }) {
   const ref = useRef()
   const inView = useInView(ref, { once: true, margin: '-60px' })
-  const [hovered, setHovered] = useState(false)
 
   return (
     <motion.div
@@ -42,11 +41,8 @@ function ProductCard({ product, onAddToCart, index }) {
       initial={{ opacity: 0, y: 40 }}
       animate={inView ? { opacity: 1, y: 0 } : {}}
       transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1], delay: index * 0.07 }}
-      onMouseEnter={() => setHovered(true)}
-      onMouseLeave={() => setHovered(false)}
       className="group relative flex flex-col bg-[#111009] border border-gold/10 hover:border-gold/30 transition-colors duration-300"
     >
-      {/* Image */}
       <Link href={`/products/${product._id}`}>
         <div className="relative aspect-[3/4] overflow-hidden bg-[#0D0C0A]">
           <img
@@ -54,22 +50,17 @@ function ProductCard({ product, onAddToCart, index }) {
             alt={product.name}
             className="w-full h-full object-contain transition-transform duration-700 group-hover:scale-105"
           />
-          {/* Gradient */}
           <div className="absolute inset-0 bg-gradient-to-t from-obsidian/70 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
-
-          {/* Badge */}
           {product.badge && (
             <span className="absolute top-3 left-3 font-mono text-[8px] tracking-widest uppercase bg-gold text-obsidian px-2 py-1">
               {product.badge}
             </span>
           )}
           {product.deliveryType === 'free' && (
-  <span className="absolute bottom-3 left-3 font-mono text-[8px] tracking-widest uppercase bg-green-500 text-white px-2 py-1" style={{ zIndex: 40 }}>
-    Free Delivery
-  </span>
-)}
-
-          {/* Quick view hint */}
+            <span className="absolute bottom-3 left-3 font-mono text-[8px] tracking-widest uppercase bg-green-500 text-white px-2 py-1" style={{ zIndex: 40 }}>
+              Free Delivery
+            </span>
+          )}
           <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300">
             <span className="font-mono text-[9px] tracking-widest uppercase text-cream/70 border border-cream/20 px-4 py-2 backdrop-blur-sm bg-obsidian/40">
               View Details
@@ -78,7 +69,6 @@ function ProductCard({ product, onAddToCart, index }) {
         </div>
       </Link>
 
-      {/* Info */}
       <div className="p-4 flex flex-col gap-2">
         <span className="font-mono text-[8px] tracking-widest uppercase text-gold/40">
           {product.category}
@@ -88,8 +78,6 @@ function ProductCard({ product, onAddToCart, index }) {
             {product.name}
           </h3>
         </Link>
-
-        {/* Price row */}
         <div className="flex items-center gap-2 mt-1">
           <span className="font-mono text-sm font-bold text-gold">
             PKR {product.price?.toLocaleString()}
@@ -100,24 +88,20 @@ function ProductCard({ product, onAddToCart, index }) {
             </span>
           )}
         </div>
-
-        {/* Stock */}
         <span className={`font-mono text-[8px] uppercase tracking-widest ${product.countInStock > 0 ? 'text-green-400/60' : 'text-red-400/60'}`}>
           {product.countInStock > 0 ? 'In Stock' : 'Out of Stock'}
         </span>
-
-        {/* Add to cart */}
         {product.countInStock > 0 && (
           <button
-onClick={() => onAddToCart({
-  id: product._id,
-  _id: product._id,
-  name: product.name,
-  price: product.price,
-  image: product.image,
-  countInStock: product.countInStock,
-  deliveryType: product.deliveryType || 'standard',
-})}
+            onClick={() => onAddToCart({
+              id: product._id,
+              _id: product._id,
+              name: product.name,
+              price: product.price,
+              image: product.image,
+              countInStock: product.countInStock,
+              deliveryType: product.deliveryType || 'standard',
+            })}
             className="mt-2 w-full font-mono text-[9px] tracking-widest uppercase bg-gold/10 text-gold border border-gold/20 py-2.5 hover:bg-gold hover:text-obsidian transition-all duration-300 flex items-center justify-center gap-1.5"
           >
             <ShoppingBag size={11} />
@@ -138,7 +122,6 @@ function CategorySection({ category, products, onAddToCart }) {
 
   return (
     <section ref={ref} className="py-20 px-6 md:px-16 border-t border-gold/10">
-      {/* Section header */}
       <motion.div
         initial={{ opacity: 0, y: 30 }}
         animate={inView ? { opacity: 1, y: 0 } : {}}
@@ -164,7 +147,6 @@ function CategorySection({ category, products, onAddToCart }) {
         </div>
       </motion.div>
 
-      {/* Grid */}
       <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-3">
         {products.map((product, i) => (
           <ProductCard
@@ -181,29 +163,11 @@ function CategorySection({ category, products, onAddToCart }) {
 
 export default function CategoriesPage({
   user, onLogout, setAuthOpen,
-  cartItems, setCartOpen, onAddToCart, onRemoveFromCart, onClearCart, toast
+  cartItems = [], setCartOpen, onAddToCart, onRemoveFromCart, onClearCart, toast = { show: false, message: '' }
 }) {
   const [products, setProducts] = useState([])
   const [loading, setLoading] = useState(true)
-  const [cartOpen, setCartOpen] = useState(false)
   const [activeTab, setActiveTab] = useState('all')
-
-  const handleAddToCart = (product) => {
-    setCartItems(prev => {
-      const existing = prev.find(item => item.id === product.id)
-      if (existing) {
-        return prev.map(item =>
-          item.id === product.id
-            ? { ...item, quantity: item.quantity + 1 }
-            : item
-        )
-      }
-      return [...prev, { ...product, quantity: 1 }]
-    })
-    setToast({ show: true, message: `✦ "${product.name}" added to cart` })
-    setTimeout(() => setToast({ show: false, message: '' }), 3200)
-    setCartOpen(true)
-  }
 
   useEffect(() => {
     axios.get(`${process.env.NEXT_PUBLIC_API_URL}/api/products`)
@@ -214,7 +178,6 @@ export default function CategoriesPage({
       .catch(() => setLoading(false))
   }, [])
 
-  // Group products by category
   const grouped = products.reduce((acc, p) => {
     const cat = p.category?.toLowerCase() || 'other'
     if (!acc[cat]) acc[cat] = []
@@ -222,17 +185,13 @@ export default function CategoriesPage({
     return acc
   }, {})
 
-  // Sorted category keys — known ones first, then any others
   const categoryKeys = [
     ...CATEGORY_ORDER.filter(c => grouped[c]?.length > 0),
     ...Object.keys(grouped).filter(c => !CATEGORY_ORDER.includes(c) && grouped[c]?.length > 0),
   ]
 
   const tabs = ['all', ...categoryKeys]
-
-  const visibleCategories = activeTab === 'all'
-    ? categoryKeys
-    : [activeTab]
+  const visibleCategories = activeTab === 'all' ? categoryKeys : [activeTab]
 
   if (loading) return (
     <div className="min-h-screen bg-obsidian flex items-center justify-center">
@@ -248,23 +207,22 @@ export default function CategoriesPage({
       </Head>
 
       <div className="min-h-screen bg-obsidian">
-<Navbar
-  cartCount={cartItems.reduce((sum, i) => sum + i.quantity, 0)}
-  onCartClick={() => setCartOpen(true)}
-  user={user}
-  onLoginClick={() => setAuthOpen(true)}
-  onLogout={onLogout}
-/>
+        <Navbar
+          cartCount={cartItems.reduce((sum, i) => sum + i.quantity, 0)}
+          onCartClick={() => setCartOpen(true)}
+          user={user}
+          onLoginClick={() => setAuthOpen?.(true)}
+          onLogout={onLogout}
+        />
         <CartSidebar
-          isOpen={cartOpen}
+          isOpen={false}
           onClose={() => setCartOpen(false)}
           cartItems={cartItems}
-          onRemove={(id) => setCartItems(prev => prev.filter(item => item.id !== id))}
-          onClearCart={() => setCartItems([])}
+          onRemove={onRemoveFromCart}
+          onClearCart={onClearCart}
         />
         <Toast show={toast.show} message={toast.message} />
 
-        {/* Page header */}
         <div className="pt-32 pb-0 px-6 md:px-16">
           <div className="flex items-center gap-4 mb-8">
             <Link href="/collection" className="inline-flex items-center gap-2 font-mono text-[10px] tracking-widest uppercase text-gold/40 hover:text-gold transition-colors">
@@ -291,16 +249,13 @@ export default function CategoriesPage({
             </p>
           </div>
 
-          {/* Category tabs */}
           <div className="flex items-center gap-0 mt-10 border-b border-gold/10">
             {tabs.map(tab => (
               <button
                 key={tab}
                 onClick={() => setActiveTab(tab)}
                 className={`relative font-mono text-[10px] tracking-widest uppercase px-6 py-4 transition-colors duration-200 ${
-                  activeTab === tab
-                    ? 'text-gold'
-                    : 'text-cream/25 hover:text-cream/50'
+                  activeTab === tab ? 'text-gold' : 'text-cream/25 hover:text-cream/50'
                 }`}
               >
                 {tab === 'all' ? 'All' : CATEGORY_META[tab]?.label || tab}
@@ -316,17 +271,15 @@ export default function CategoriesPage({
           </div>
         </div>
 
-        {/* Category sections */}
         {visibleCategories.map(cat => (
           <CategorySection
             key={cat}
             category={cat}
             products={grouped[cat] || []}
-            onAddToCart={handleAddToCart}
+            onAddToCart={onAddToCart}
           />
         ))}
 
-        {/* Empty state */}
         {visibleCategories.length === 0 && (
           <div className="py-32 flex flex-col items-center gap-4 text-center">
             <span className="font-display text-5xl text-gold/10">✦</span>
@@ -334,7 +287,6 @@ export default function CategoriesPage({
           </div>
         )}
 
-        {/* Footer */}
         <div className="py-20 flex flex-col items-center gap-4 border-t border-gold/10 mt-4">
           <div className="flex items-center gap-4">
             <div className="w-12 h-px bg-gold/15" />

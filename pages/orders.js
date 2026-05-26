@@ -439,7 +439,7 @@ export default function OrdersPage({ user }) {
       .catch(() => setLoading(false))
   }, [])
 
-  const userName = user?.name || session?.user?.name
+  const userName = user?.name
 
   return (
     <>

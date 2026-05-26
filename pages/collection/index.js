@@ -21,12 +21,10 @@ function ProductEntry({ product, index, onAddToCart }) {
       transition={{ duration: 0.9, ease: [0.22, 1, 0.36, 1] }}
       className="relative"
     >
-      {/* Gold divider */}
       {index > 0 && (
         <div className="h-px bg-gradient-to-r from-transparent via-gold/30 to-transparent mb-0" />
       )}
 
-      {/* Product row — alternates left/right */}
       <div className={`grid grid-cols-1 md:grid-cols-2 md:h-screen items-start`}>
 
         {/* Image side */}
@@ -34,23 +32,16 @@ function ProductEntry({ product, index, onAddToCart }) {
           <a href={`/products/${product._id}`}>
             <div className="md:sticky md:top-0 md:h-screen md:max-h-screen overflow-hidden h-[100vw]">
               <img
-  src={product.image}
-  alt={product.name}
-  className="w-full h-full object-contain transition-transform duration-700 hover:scale-105"
-/>
-              {/* Gradient overlay */}
+                src={product.image}
+                alt={product.name}
+                className="w-full h-full object-contain transition-transform duration-700 hover:scale-105"
+              />
               <div className="absolute inset-0 bg-gradient-to-t from-obsidian/60 via-transparent to-transparent" />
-
-              {/* Badge */}
               {product.badge && (
                 <span className="absolute top-8 left-8 font-mono text-[9px] tracking-widest uppercase bg-gold text-obsidian px-3 py-1.5">
                   {product.badge}
                 </span>
-                
               )}
-
-
-              {/* Category bottom left */}
               <div className="absolute bottom-8 left-8">
                 <span className="font-mono text-[9px] tracking-widest uppercase text-gold/70">
                   {product.category}
@@ -62,7 +53,6 @@ function ProductEntry({ product, index, onAddToCart }) {
 
         {/* Info side */}
         <div className={`flex flex-col justify-center px-6 md:px-12 py-10 md:py-12 bg-obsidian ${isEven ? 'md:order-2' : 'md:order-1'}`}>
-          {/* Index number */}
           <span className="font-mono text-[10px] tracking-widest uppercase text-gold/20 mb-6">
             {String(index + 1).padStart(2, '0')} / {String(product.totalCount || '').padStart(2, '0')}
           </span>
@@ -71,7 +61,6 @@ function ProductEntry({ product, index, onAddToCart }) {
             {product.name}
           </h2>
 
-          {/* Stars */}
           {product.avgRating > 0 && (
             <div className="flex items-center gap-2 mb-6">
               <div className="flex gap-0.5">
@@ -91,26 +80,24 @@ function ProductEntry({ product, index, onAddToCart }) {
             {product.description}
           </p>
 
-          {/* Ingredients */}
           {product.ingredients?.length > 0 && (
             <div className="mb-4">
               <p className="font-mono text-[9px] tracking-widest uppercase text-gold/40 mb-3">Key Ingredients</p>
-<div className="flex flex-wrap gap-2">
-  {product.ingredients.slice(0, 4).map((ing, i) => (
-    <span key={i} className="font-body text-xs border border-gold/20 text-gold/60 px-3 py-1">
-      {ing}
-    </span>
-  ))}
-  {product.ingredients.length > 4 && (
-    <span className="font-body text-xs text-gold/30 px-1 py-1">
-      +{product.ingredients.length - 4} more
-    </span>
-  )}
-</div>
+              <div className="flex flex-wrap gap-2">
+                {product.ingredients.slice(0, 4).map((ing, i) => (
+                  <span key={i} className="font-body text-xs border border-gold/20 text-gold/60 px-3 py-1">
+                    {ing}
+                  </span>
+                ))}
+                {product.ingredients.length > 4 && (
+                  <span className="font-body text-xs text-gold/30 px-1 py-1">
+                    +{product.ingredients.length - 4} more
+                  </span>
+                )}
+              </div>
             </div>
           )}
 
-          {/* Price */}
           <div className="flex flex-col gap-1 mb-4">
             {product.originalPrice && (
               <div className="flex items-center gap-2">
@@ -127,30 +114,29 @@ function ProductEntry({ product, index, onAddToCart }) {
             </span>
           </div>
 
-          {/* Stock */}
-<div className="flex items-center gap-3 mb-4 flex-wrap">
-  <span className={`font-mono text-[10px] uppercase tracking-widest ${product.countInStock > 0 ? 'text-green-400' : 'text-red-400'}`}>
-    {product.countInStock > 0 ? `In Stock · ${product.countInStock} left` : 'Out of Stock'}
-  </span>
-  {product.deliveryType === 'free' && (
-    <span className="font-mono text-[9px] uppercase tracking-widest text-white bg-green-500 px-3 py-1">
-      ✦ Free Delivery
-    </span>
-  )}
-</div>
-          {/* Buttons */}
+          <div className="flex items-center gap-3 mb-4 flex-wrap">
+            <span className={`font-mono text-[10px] uppercase tracking-widest ${product.countInStock > 0 ? 'text-green-400' : 'text-red-400'}`}>
+              {product.countInStock > 0 ? `In Stock · ${product.countInStock} left` : 'Out of Stock'}
+            </span>
+            {product.deliveryType === 'free' && (
+              <span className="font-mono text-[9px] uppercase tracking-widest text-white bg-green-500 px-3 py-1">
+                ✦ Free Delivery
+              </span>
+            )}
+          </div>
+
           <div className="flex flex-col gap-3 max-w-xs">
             {product.countInStock > 0 && (
               <button
-onClick={() => onAddToCart({
-  id: product._id,
-  _id: product._id,
-  name: product.name,
-  price: product.price,
-  image: product.image,
-  countInStock: product.countInStock,
-  deliveryType: product.deliveryType || 'standard',
-})}
+                onClick={() => onAddToCart({
+                  id: product._id,
+                  _id: product._id,
+                  name: product.name,
+                  price: product.price,
+                  image: product.image,
+                  countInStock: product.countInStock,
+                  deliveryType: product.deliveryType || 'standard',
+                })}
                 className="w-full font-mono text-[11px] tracking-widest uppercase bg-gold text-obsidian py-4 hover:bg-gold/80 transition-colors flex items-center justify-center gap-2"
               >
                 <ShoppingBag size={14} />
@@ -167,49 +153,25 @@ onClick={() => onAddToCart({
           </div>
         </div>
       </div>
-
-     
     </motion.div>
   )
 }
 
 export default function CollectionPage({
   user, onLogout, setAuthOpen,
-  cartItems, setCartOpen, onAddToCart, onRemoveFromCart, onClearCart, toast
+  cartItems = [], setCartOpen, onAddToCart, onRemoveFromCart, onClearCart,
+  toast = { show: false, message: '' }
 }) {
   const [products, setProducts] = useState([])
   const [loading, setLoading] = useState(true)
   const [reviews, setReviews] = useState({})
-  const [cartOpen, setCartOpen] = useState(false)
-  const [localToast, setLocalToast] = useState({ show: false, message: '' })
 
-  const handleAddToCart = (product) => {
-    setCartItems(prev => {
-      const existing = prev.find(item => item.id === product.id)
-      if (existing) {
-        return prev.map(item =>
-          item.id === product.id
-            ? { ...item, quantity: item.quantity + 1 }
-            : item
-        )
-      }
-      return [...prev, { ...product, quantity: 1 }]
-    })
-    setToast({ show: true, message: `✦ "${product.name}" added to cart` })
-    setTimeout(() => setToast({ show: false, message: '' }), 3200)
-    setCartOpen(true)
-  }
-
-  const handleRemoveFromCart = (id) => {
-    setCartItems(prev => prev.filter(item => item.id !== id))
-  }
   useEffect(() => {
     axios.get(`${process.env.NEXT_PUBLIC_API_URL}/api/products`)
       .then(res => {
         const prods = res.data.products || []
         setProducts(prods)
         setLoading(false)
-        // Fetch reviews for each product
         prods.forEach(p => {
           axios.get(`${process.env.NEXT_PUBLIC_API_URL}/api/reviews/${p._id}`)
             .then(r => setReviews(prev => ({ ...prev, [p._id]: r.data.avgRating })))
@@ -233,31 +195,29 @@ export default function CollectionPage({
       </Head>
 
       <div className="min-h-screen bg-obsidian">
-<Navbar
-  cartCount={cartItems.reduce((sum, i) => sum + i.quantity, 0)}
-  onCartClick={() => setCartOpen(true)}
-  user={user}
-  onLoginClick={() => setAuthOpen(true)}
-  onLogout={onLogout}
-/>
-  <CartSidebar
-    isOpen={cartOpen}
-    onClose={() => setCartOpen(false)}
-    cartItems={cartItems}
-    onRemove={handleRemoveFromCart}
-    onClearCart={() => setCartItems([])}
-  />
-  <Toast show={toast.show} message={toast.message} />
+        <Navbar
+          cartCount={cartItems.reduce((sum, i) => sum + i.quantity, 0)}
+          onCartClick={() => setCartOpen(true)}
+          user={user}
+          onLoginClick={() => setAuthOpen?.(true)}
+          onLogout={onLogout}
+        />
+        <CartSidebar
+          isOpen={false}
+          onClose={() => setCartOpen(false)}
+          cartItems={cartItems}
+          onRemove={onRemoveFromCart}
+          onClearCart={onClearCart}
+        />
+        <Toast show={toast.show} message={toast.message} />
 
         {/* Hero header */}
         <div className="relative h-screen flex flex-col items-center justify-center bg-obsidian overflow-hidden">
-          {/* Ambient glow */}
           <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
             <div className="w-[600px] h-[600px] rounded-full"
               style={{ background: 'radial-gradient(circle, rgba(201,168,76,0.06) 0%, transparent 70%)' }} />
           </div>
 
-          {/* Back link */}
           <div className="absolute top-8 left-8 md:top-10 md:left-16 z-10 pt-16">
             <Link href="/" className="inline-flex items-center gap-2 font-mono text-[10px] tracking-widest uppercase text-gold/40 hover:text-gold transition-colors">
               <ArrowLeft size={13} />
@@ -290,54 +250,50 @@ export default function CollectionPage({
             </div>
           </motion.div>
 
-{/* Scroll hint */}
-<motion.div
-  initial={{ opacity: 0 }}
-  animate={{ opacity: 1 }}
-  transition={{ delay: 1.5 }}
-  className="absolute bottom-10 flex flex-col items-center gap-6"
->
-  <div className="flex items-center gap-3">
-{['Skincare', 'Haircare', 'Bodycare'].map((cat) => (
-  <Link
-    key={cat}
-    href="/collection/categories"
-    className="relative font-mono text-[10px] tracking-widest uppercase text-gold/40 hover:text-gold border border-gold/15 hover:border-gold/40 px-6 py-3 transition-colors duration-200 overflow-hidden group"
-  >
-    {/* Shimmer sweep */}
-    <span
-      className="absolute inset-0 -translate-x-full group-hover:translate-x-full transition-transform duration-700 ease-in-out"
-      style={{
-        background: 'linear-gradient(90deg, transparent 0%, rgba(201,168,76,0.15) 40%, rgba(255,240,180,0.25) 50%, rgba(201,168,76,0.15) 60%, transparent 100%)',
-      }}
-    />
-    {/* Ambient glitter — always animating */}
-    {/* Always-on slow shimmer */}
-<span
-  className="absolute inset-0"
-  style={{
-    background: 'linear-gradient(90deg, transparent 0%, rgba(201,168,76,0.08) 40%, rgba(255,240,180,0.13) 50%, rgba(201,168,76,0.08) 60%, transparent 100%)',
-    animation: 'slowShimmer 3.5s ease-in-out infinite',
-  }}
-/>
-    <span
-      className="absolute inset-0 opacity-0 hover:opacity-100"
-      style={{
-        background: 'radial-gradient(ellipse at 50% 50%, rgba(201,168,76,0.08) 0%, transparent 70%)',
-        animation: 'pulseGlow 2.5s ease-in-out infinite',
-      }}
-    />
-    <span className="relative z-10">{cat}</span>
-  </Link>
-))}
-  </div>
-  <span className="font-mono text-[8px] tracking-widest uppercase text-gold/20">Scroll to explore</span>
-  <motion.div
-    animate={{ y: [0, 8, 0] }}
-    transition={{ duration: 1.5, repeat: Infinity }}
-    className="w-px h-8 bg-gradient-to-b from-gold/30 to-transparent"
-  />
-</motion.div>
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ delay: 1.5 }}
+            className="absolute bottom-10 flex flex-col items-center gap-6"
+          >
+            <div className="flex items-center gap-3">
+              {['Skincare', 'Haircare', 'Bodycare'].map((cat) => (
+                <Link
+                  key={cat}
+                  href="/collection/categories"
+                  className="relative font-mono text-[10px] tracking-widest uppercase text-gold/40 hover:text-gold border border-gold/15 hover:border-gold/40 px-6 py-3 transition-colors duration-200 overflow-hidden group"
+                >
+                  <span
+                    className="absolute inset-0 -translate-x-full group-hover:translate-x-full transition-transform duration-700 ease-in-out"
+                    style={{
+                      background: 'linear-gradient(90deg, transparent 0%, rgba(201,168,76,0.15) 40%, rgba(255,240,180,0.25) 50%, rgba(201,168,76,0.15) 60%, transparent 100%)',
+                    }}
+                  />
+                  <span
+                    className="absolute inset-0"
+                    style={{
+                      background: 'linear-gradient(90deg, transparent 0%, rgba(201,168,76,0.08) 40%, rgba(255,240,180,0.13) 50%, rgba(201,168,76,0.08) 60%, transparent 100%)',
+                      animation: 'slowShimmer 3.5s ease-in-out infinite',
+                    }}
+                  />
+                  <span
+                    className="absolute inset-0 opacity-0 hover:opacity-100"
+                    style={{
+                      background: 'radial-gradient(ellipse at 50% 50%, rgba(201,168,76,0.08) 0%, transparent 70%)',
+                      animation: 'pulseGlow 2.5s ease-in-out infinite',
+                    }}
+                  />
+                  <span className="relative z-10">{cat}</span>
+                </Link>
+              ))}
+            </div>
+            <span className="font-mono text-[8px] tracking-widest uppercase text-gold/20">Scroll to explore</span>
+            <motion.div
+              animate={{ y: [0, 8, 0] }}
+              transition={{ duration: 1.5, repeat: Infinity }}
+              className="w-px h-8 bg-gradient-to-b from-gold/30 to-transparent"
+            />
+          </motion.div>
         </div>
 
         {/* Products */}
@@ -346,7 +302,7 @@ export default function CollectionPage({
             key={product._id}
             product={{ ...product, avgRating: reviews[product._id] || 0, totalCount: products.length }}
             index={index}
-            onAddToCart={handleAddToCart}
+            onAddToCart={onAddToCart}
           />
         ))}
 
@@ -366,7 +322,6 @@ export default function CollectionPage({
             Back to Store
           </Link>
         </div>
-
       </div>
     </>
   )
