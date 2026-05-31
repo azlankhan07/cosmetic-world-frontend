@@ -45,6 +45,8 @@ function isValidPhone(phone) {
 export default function CartSidebar({ isOpen, onClose, cartItems, onRemove, onClearCart }) {
   const [step, setStep] = useState('cart')
   const [loading, setLoading] = useState(false)
+  const [orderSuccess, setOrderSuccess] = useState(false)
+  const [orderedTotal, setOrderedTotal] = useState(0)
   const [form, setForm] = useState({
   fullName: '',
   address: '',
@@ -53,6 +55,7 @@ export default function CartSidebar({ isOpen, onClose, cartItems, onRemove, onCl
   city: '',
   phone: ''
 })
+
 
   const total = cartItems.reduce((sum, item) => {
     const price = typeof item.price === 'string'
@@ -115,11 +118,12 @@ const grandTotal = total + deliveryCharge
       { headers: { Authorization: `Bearer ${token}` } }
     )
 
-    onClearCart()
-    onClose()
-    setStep('cart')
-    setForm({ fullName: '', address: '', country: 'Pakistan', province: '', city: '', phone: '' })
-    alert('🎉 Order placed! Pay PKR ' + grandTotal.toLocaleString() + ' on delivery.')
+onClearCart()
+onClose()
+setStep('cart')
+setOrderedTotal(grandTotal)
+setForm({ fullName: '', address: '', country: 'Pakistan', province: '', city: '', phone: '' })
+setOrderSuccess(true)
   } catch (error) {
     alert(error.response?.data?.message || 'Failed to place order')
   }
@@ -127,6 +131,7 @@ const grandTotal = total + deliveryCharge
 }
 
   return (
+    <>
     <AnimatePresence>
       {isOpen && (
         <>
@@ -369,6 +374,99 @@ const grandTotal = total + deliveryCharge
           </motion.div>
         </>
       )}
+      
     </AnimatePresence>
+    {/* Order Success Modal */}
+<AnimatePresence>
+  {orderSuccess && (
+    <>
+      <motion.div
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        exit={{ opacity: 0 }}
+        className="fixed inset-0 bg-black/60 z-50 backdrop-blur-sm"
+        onClick={() => setOrderSuccess(false)}
+      />
+      <motion.div
+        initial={{ opacity: 0, scale: 0.92, y: 30 }}
+        animate={{ opacity: 1, scale: 1, y: 0 }}
+        exit={{ opacity: 0, scale: 0.92, y: 30 }}
+        transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
+        className="fixed inset-0 z-50 flex items-center justify-center px-6 pointer-events-none"
+      >
+        <div className="bg-obsidian w-full max-w-md pointer-events-auto border border-gold/20 shadow-2xl overflow-hidden">
+
+          {/* Gold top bar */}
+          <div className="h-1 w-full bg-gradient-to-r from-transparent via-gold to-transparent" />
+
+          {/* Content */}
+          <div className="px-8 py-10 flex flex-col items-center text-center gap-5">
+
+            {/* Icon */}
+            <motion.div
+              initial={{ scale: 0 }}
+              animate={{ scale: 1 }}
+              transition={{ delay: 0.2, type: 'spring', stiffness: 200 }}
+              className="w-16 h-16 rounded-full bg-gold/10 border border-gold/30 flex items-center justify-center"
+            >
+              <span className="text-2xl">✦</span>
+            </motion.div>
+
+            {/* Text */}
+            <div className="flex flex-col gap-2">
+              <p className="font-mono text-[10px] tracking-widest uppercase text-gold/60">
+                Order Confirmed
+              </p>
+              <h2 className="font-display text-3xl font-black text-cream leading-tight">
+                Thank You for<br />
+                <span className="font-heading italic text-gold">Shopping With Us</span>
+              </h2>
+              <p className="font-body text-sm text-cream/50 leading-relaxed mt-1">
+                Your order has been placed successfully. Our team will prepare your package with care.
+              </p>
+            </div>
+
+            {/* Amount */}
+            <div className="w-full border border-gold/15 bg-white/5 px-6 py-4 flex items-center justify-between">
+              <span className="font-mono text-[10px] tracking-widest uppercase text-cream/40">
+                Amount Due on Delivery
+              </span>
+              <span className="font-display text-xl font-black text-gold">
+                PKR {orderedTotal.toLocaleString()}
+              </span>
+            </div>
+
+            {/* View Orders button */}
+            <a
+              href="/orders"
+              onClick={() => setOrderSuccess(false)}
+              className="w-full bg-gold text-obsidian font-mono text-[11px] tracking-widest uppercase py-4 hover:bg-gold/80 transition-colors flex items-center justify-center gap-2"
+            >
+              View My Orders →
+            </a>
+
+            <button
+              onClick={() => setOrderSuccess(false)}
+              className="font-mono text-[10px] tracking-widest uppercase text-cream/30 hover:text-cream/60 transition-colors"
+            >
+              Continue Shopping
+            </button>
+
+            {/* Cancellation note */}
+            <p className="font-body text-[11px] text-cream/25 leading-relaxed border-t border-gold/10 pt-4 w-full text-center">
+              Placed your order by mistake? You can cancel it within{' '}
+              <span className="text-gold/50">5 hours</span> from your orders page.
+            </p>
+          </div>
+
+          {/* Gold bottom bar */}
+          <div className="h-1 w-full bg-gradient-to-r from-transparent via-gold to-transparent" />
+
+        </div>
+      </motion.div>
+    </>
+  )}
+</AnimatePresence>
+    </>
   )
 }
