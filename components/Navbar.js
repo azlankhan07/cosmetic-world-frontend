@@ -74,15 +74,23 @@ export default function Navbar({
         }`}
       >
         {/* Logo */}
-        <a href="/" className="flex flex-col leading-none shrink-0">
-          <span className="font-accent text-3xl tracking-widest text-gold-light">
-            COSMETIC
-          </span>
+<a href="/" className="flex items-center gap-3 leading-none shrink-0">
+  <img
+    src="/images/CW.png"
+    alt="Cosmetic World"
+    className="h-16 w-16 object-contain shrink-0"
+  />
 
-          <span className="font-mono text-[9px] tracking-widest2 text-gold/60 uppercase ml-0.5">
-            World · By Azlan Khan
-          </span>
-        </a>
+  <div className="flex flex-col">
+    <span className="font-accent text-3xl tracking-widest text-gold-light">
+      COSMETIC
+    </span>
+    <span className="font-mono text-[9px] tracking-widest2 text-gold/60 uppercase ml-0.5">
+      World · By Azlan Khan
+    </span>
+  </div>
+</a>
+
 
         {/* Desktop Links */}
         <motion.ul
@@ -131,7 +139,7 @@ export default function Navbar({
           >
             <motion.div
               animate={{
-                width: searchHovered ? 700 : 0,
+                width: searchHovered ? 620 : 0,
                 opacity: searchHovered ? 1 : 0
               }}
               transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
