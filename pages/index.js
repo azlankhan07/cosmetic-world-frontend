@@ -28,6 +28,7 @@ export default function Home({
         <meta name="description" content="Premium skincare and haircare rooted in ancient wisdom." />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <link rel="icon" href="/favicon.ico" />
+         <link rel="apple-touch-icon" href="/favicon.ico" />
       </Head>
 
       <Cursor />
