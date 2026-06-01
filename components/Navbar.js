@@ -67,25 +67,25 @@ export default function Navbar({
         initial={{ y: -80, opacity: 0 }}
         animate={{ y: 0, opacity: 1 }}
         transition={{ duration: 0.7, ease: [0.22, 1, 0.36, 1] }}
-        className={`fixed top-0 left-0 right-0 z-50 px-8 md:px-16 py-5 flex items-center justify-between transition-all duration-500 overflow-visible ${
+        className={`fixed top-0 left-0 right-0 z-50 px-4 md:px-16 py-4 md:py-5 flex items-center justify-between transition-all duration-500 overflow-visible ${
           scrolled
             ? 'bg-[#0D0C0A]/90 backdrop-blur-xl border-b border-gold/10 py-4'
             : 'bg-transparent'
         }`}
       >
         {/* Logo */}
-<a href="/" className="flex items-center gap-3 leading-none shrink-0">
+<a href="/" className="flex items-center gap-2 md:gap-3 leading-none shrink-0 max-w-[58vw] md:max-w-none">
   <img
     src="/images/CW.png"
     alt="Cosmetic World"
-    className="h-16 w-16 object-contain shrink-0"
+    className="h-12 w-12 md:h-16 md:w-16 object-contain shrink-0"
   />
 
-  <div className="flex flex-col">
-    <span className="font-accent text-3xl tracking-widest text-gold-light">
+  <div className="flex flex-col min-w-0">
+    <span className="font-accent text-2xl md:text-3xl tracking-widest text-gold-light leading-none">
       COSMETIC
     </span>
-    <span className="font-mono text-[9px] tracking-widest2 text-gold/60 uppercase ml-0.5">
+    <span className="font-mono text-[7px] md:text-[9px] tracking-widest2 text-gold/60 uppercase ml-0.5 truncate">
       World · By Azlan Khan
     </span>
   </div>
@@ -124,7 +124,7 @@ export default function Navbar({
         </motion.ul>
 
         {/* Right Side */}
-        <div className="flex items-center gap-6 relative">
+        <div className="flex items-center gap-3 md:gap-6 relative shrink-0">
 
           {/* Search */}
           <div
