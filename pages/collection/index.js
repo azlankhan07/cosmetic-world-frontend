@@ -159,7 +159,7 @@ function ProductEntry({ product, index, onAddToCart }) {
 
 export default function CollectionPage({
   user, onLogout, setAuthOpen,
-  cartItems = [], setCartOpen, onAddToCart, onRemoveFromCart, onClearCart,
+  cartItems = [], cartOpen, setCartOpen, onAddToCart, onRemoveFromCart, onClearCart,
   toast = { show: false, message: '' }
 }) {
   const [products, setProducts] = useState([])
@@ -202,13 +202,13 @@ export default function CollectionPage({
           onLoginClick={() => setAuthOpen?.(true)}
           onLogout={onLogout}
         />
-        <CartSidebar
-          isOpen={false}
-          onClose={() => setCartOpen(false)}
-          cartItems={cartItems}
-          onRemove={onRemoveFromCart}
-          onClearCart={onClearCart}
-        />
+<CartSidebar
+  isOpen={cartOpen}
+  onClose={() => setCartOpen(false)}
+  cartItems={cartItems}
+  onRemove={onRemoveFromCart}
+  onClearCart={onClearCart}
+/>
         <Toast show={toast.show} message={toast.message} />
 
         {/* Hero header */}

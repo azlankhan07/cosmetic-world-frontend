@@ -8,7 +8,18 @@ import Navbar from '../../components/Navbar'
 import CartSidebar from '../../components/CartSidebar'
 import Toast from '../../components/Toast'
 
-export default function ProductPage() {
+export default function ProductPage({
+  user,
+  onLogout,
+  setAuthOpen,
+  cartItems = [],
+  cartOpen,
+  setCartOpen,
+  onAddToCart,
+  onRemoveFromCart,
+  onClearCart,
+  toast = { show: false, message: '' }
+}) {
   const router = useRouter()
   const { id } = router.query
   const [product, setProduct] = useState(null)
@@ -16,26 +27,6 @@ export default function ProductPage() {
   const [avgRating, setAvgRating] = useState(0)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(false)
-  const [cartItems, setCartItems] = useState([])
-  const [cartOpen, setCartOpen] = useState(false)
-  const [toast, setToast] = useState({ show: false, message: '' })
-
-  const handleAddToCart = (product) => {
-    setCartItems(prev => {
-      const existing = prev.find(item => item.id === product.id)
-      if (existing) {
-        return prev.map(item =>
-          item.id === product.id
-            ? { ...item, quantity: item.quantity + 1 }
-            : item
-        )
-      }
-      return [...prev, { ...product, quantity: 1 }]
-    })
-    setToast({ show: true, message: `✦ "${product.name}" added to cart` })
-    setTimeout(() => setToast({ show: false, message: '' }), 3200)
-    setCartOpen(true)
-  }
 
   useEffect(() => {
     if (!id) return
@@ -48,9 +39,9 @@ export default function ProductPage() {
       setAvgRating(reviewRes.data.avgRating)
       setLoading(false)
     }).catch(() => {
-  setError(true)
-  setLoading(false)
-})
+      setError(true)
+      setLoading(false)
+    })
   }, [id])
 
   if (loading) return (
@@ -58,17 +49,18 @@ export default function ProductPage() {
       <div className="w-8 h-8 border-2 border-gold border-t-transparent rounded-full animate-spin" />
     </div>
   )
+
   if (error) return (
-  <div className="min-h-screen bg-cream flex flex-col items-center justify-center gap-4">
-    <p className="font-body text-muted">Something went wrong. Please try again.</p>
-    <button
-      onClick={() => router.back()}
-      className="font-mono text-[10px] tracking-widest uppercase text-gold hover:underline"
-    >
-      Go Back
-    </button>
-  </div>
-)
+    <div className="min-h-screen bg-cream flex flex-col items-center justify-center gap-4">
+      <p className="font-body text-muted">Something went wrong. Please try again.</p>
+      <button
+        onClick={() => router.back()}
+        className="font-mono text-[10px] tracking-widest uppercase text-gold hover:underline"
+      >
+        Go Back
+      </button>
+    </div>
+  )
 
   if (!product) return (
     <div className="min-h-screen bg-cream flex items-center justify-center">
@@ -83,18 +75,22 @@ export default function ProductPage() {
       </Head>
 
       <div className="min-h-screen bg-cream">
-  <Navbar
-    cartCount={cartItems.reduce((sum, i) => sum + i.quantity, 0)}
-    onCartClick={() => setCartOpen(true)}
-  />
-  <CartSidebar
-    isOpen={cartOpen}
-    onClose={() => setCartOpen(false)}
-    cartItems={cartItems}
-    onRemove={(id) => setCartItems(prev => prev.filter(item => item.id !== id))}
-    onClearCart={() => setCartItems([])}
-  />
-  <Toast show={toast.show} message={toast.message} />
+        <Navbar
+          cartCount={cartItems.reduce((sum, i) => sum + i.quantity, 0)}
+          onCartClick={() => setCartOpen(true)}
+          user={user}
+          onLoginClick={() => setAuthOpen(true)}
+          onLogout={onLogout}
+        />
+        <CartSidebar
+          isOpen={cartOpen}
+          onClose={() => setCartOpen(false)}
+          cartItems={cartItems}
+          onRemove={onRemoveFromCart}
+          onClearCart={onClearCart}
+        />
+        <Toast show={toast.show} message={toast.message} />
+
         {/* Header */}
         <div className="bg-obsidian px-8 md:px-16 py-8 pt-28">
           <Link href="/#products" className="inline-flex items-center gap-2 font-mono text-[10px] tracking-widest uppercase text-gold/50 hover:text-gold transition-colors mb-6">
@@ -175,16 +171,16 @@ export default function ProductPage() {
                   {product.countInStock > 0 ? `In Stock · ${product.countInStock} left` : 'Out of Stock'}
                 </span>
                 {product.deliveryType === 'free' && (
-  <span className="inline-flex items-center gap-1.5 font-mono text-[10px] uppercase tracking-widest text-white bg-green-500 px-3 py-1.5 w-fit">
-    ✦ Free Delivery
-  </span>
-)}
+                  <span className="inline-flex items-center gap-1.5 font-mono text-[10px] uppercase tracking-widest text-white bg-green-500 px-3 py-1.5 w-fit">
+                    ✦ Free Delivery
+                  </span>
+                )}
               </div>
 
               {/* Add to cart */}
               {product.countInStock > 0 && (
-  <button
-    onClick={() => handleAddToCart({
+                <button
+                  onClick={() => onAddToCart({
                     id: product._id,
                     _id: product._id,
                     name: product.name,
@@ -214,8 +210,8 @@ export default function ProductPage() {
                         <span className="font-heading font-bold text-sm text-soft-black">{review.user?.name}</span>
                         <div className="flex gap-0.5">
                           {[1,2,3,4,5].map(star => (
-                            <svg key={i} width="11" height="11" viewBox="0 0 24 24"
-                              fill={i <= review.rating ? '#C9A84C' : 'none'}
+                            <svg key={star} width="11" height="11" viewBox="0 0 24 24"
+                              fill={star <= review.rating ? '#C9A84C' : 'none'}
                               stroke="#C9A84C" strokeWidth="1.5">
                               <polygon points="12,2 15.09,8.26 22,9.27 17,14.14 18.18,21.02 12,17.77 5.82,21.02 7,14.14 2,9.27 8.91,8.26" />
                             </svg>
