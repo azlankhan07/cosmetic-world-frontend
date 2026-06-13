@@ -129,7 +129,7 @@ export default function Navbar({
           {/* Search */}
           <div
             className="hidden md:flex items-center absolute"
-            style={{ zIndex: 10, right: '210px' }}
+            style={{ zIndex: 10, right: '189px' }}
             onMouseEnter={() => setSearchHovered(true)}
             onMouseLeave={() => {
               setSearchHovered(false)
