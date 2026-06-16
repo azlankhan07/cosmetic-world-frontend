@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react'
 import { SessionProvider, useSession } from 'next-auth/react'
 import '../styles/globals.css'
+import PageLoader from '../components/PageLoader'
 
 function AppContent({ Component, pageProps }) {
   const [cartItems, setCartItems] = useState([])
@@ -92,6 +93,7 @@ function AppContent({ Component, pageProps }) {
 export default function App({ Component, pageProps: { session, ...pageProps } }) {
   return (
     <SessionProvider session={session}>
+       <PageLoader />
       <AppContent Component={Component} pageProps={pageProps} />
     </SessionProvider>
   )
